@@ -3,26 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <title>Login | Modern App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+   <link rel="stylesheet" href="login.css">
 </head>
 <body>
     <div class="login-container">
         <div class="login-form">
-            <h2>Login</h2>
+            <h2>Welcome Back</h2>
             <form action="index.html" method="post">
                 <div class="input-group">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" name="username" placeholder="Username" required>
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Email address" required autocomplete="username">
                 </div>
                 <div class="input-group">
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" name="password" placeholder="Password" required>
+                    <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
+                    <a href="#" class="forgot-password">Forgot password?</a>
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit">Sign In</button>
+                
+                <div class="divider">or continue with</div>
+                
+                <div class="social-login">
+                    <div class="social-btn google">
+                        <i class="fab fa-google"></i>
+                    </div>
+                    <div class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </div>
+                    <div class="social-btn apple">
+                        <i class="fab fa-apple"></i>
+                    </div>
+                </div>
+                
                 <p class="signup-link">Don't have an account? <a href="#">Sign up</a></p>
             </form>
         </div>

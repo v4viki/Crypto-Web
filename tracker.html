@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Tracker | Live Market Data</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #1e272e;
+      color: #f5f6fa;
+    }
+    header {
+      background: #2d3436;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header .logo {
+      font-size: 20px;
+      font-weight: bold;
+      color: #a29bfe;
+    }
+    .top-stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background: #2d3436;
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+    .top-stats span {
+      margin: 5px 10px;
+    }
+    .currency-select {
+      padding: 5px 10px;
+      margin-left: 10px;
+      font-size: 14px;
+    }
+    .trending-coins {
+      overflow-x: auto;
+      display: flex;
+      gap: 20px;
+      padding: 15px;
+      background: #2d3436;
+      margin-bottom: 20px;
+    }
+    .trending-coins .coin {
+      flex: 0 0 auto;
+      background: #3d3d3d;
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+    .portfolio {
+      background: #2d3436;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px;
+    }
+    .portfolio input {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    .portfolio-list {
+      margin-top: 10px;
+    }
+    .price-update-flash-up {
+      background-color: rgba(0, 184, 148, 0.2);
+      transition: background-color 0.5s ease;
+    }
+    .price-update-flash-down {
+      background-color: rgba(214, 48, 49, 0.2);
+      transition: background-color 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><i class="fab fa-bitcoin"></i> Crypto Tracker</div>
+    <div>
+      <label for="currency">Currency:</label>
+      <select id="currency" class="currency-select">
+        <option value="usd">USD</option>
+        <option value="inr">INR</option>
+        <option value="eur">EUR</option>
+      </select>
+    </div>
+  </header>
+  <div class="top-stats" id="globalStats">
+    Loading global market data...
+  </div>
+  <div class="trending-coins" id="trendingCoins">
+    <!-- Trending coins dynamically loaded -->
+  </div>
+  <div class="portfolio">
+    <h3>Portfolio Tracker</h3>
+    <input type="text" id="portfolioCoin" placeholder="Coin (e.g., BTC)" />
+    <input type="number" id="portfolioQty" placeholder="Quantity" />
+    <button onclick="addToPortfolio()">Add</button>
+    <div class="portfolio-list" id="portfolioList"></div>
+  </div>
+  <canvas id="priceChart"></canvas>
+  <script>
+    let selectedCurrency = 'usd';
+    let coinPrices = {};
+    const coins = ['bitcoin', 'ethereum', 'cardano', 'solana'];
+
+    async function fetchGlobalStats() {
+      const res = await fetch('https://api.coingecko.com/api/v3/global');
+      const data = await res.json();
+      const stats = data.data;
+      document.getElementById('globalStats').innerHTML = `
+        <span><strong>Market Cap:</strong> $${(stats.total_market_cap[selectedCurrency] / 1e12).toFixed(2)}T</span>
+        <span><strong>24h Volume:</strong> $${(stats.total_volume[selectedCurrency] / 1e9).toFixed(2)}B</span>
+        <span><strong>BTC Dominance:</strong> ${stats.market_cap_percentage.btc.toFixed(1)}%</span>
+        <span><strong>Active Cryptos:</strong> ${stats.active_cryptocurrencies}</span>
+      `;
+    }
+
+    async function fetchTrendingCoins() {
+      const res = await fetch('https://api.coingecko.com/api/v3/search/trending');
+      const data = await res.json();
+      const trending = data.coins.map(coin => `
+        <div class="coin">
+          <strong>${coin.item.name}</strong> (${coin.item.symbol})<br />
+          Rank: ${coin.item.market_cap_rank}
+        </div>
+      `);
+      document.getElementById('trendingCoins').innerHTML = trending.join('');
+    }
+
+    async function fetchPrices() {
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coins.join(',')}&vs_currencies=${selectedCurrency}`);
+      const data = await res.json();
+      coins.forEach(coin => {
+        const price = data[coin][selectedCurrency];
+        if (coinPrices[coin] !== undefined) {
+          if (price > coinPrices[coin]) console.log(`${coin} ↑`);
+          else if (price < coinPrices[coin]) console.log(`${coin} ↓`);
+        }
+        coinPrices[coin] = price;
+      });
+    }
+
+    function addToPortfolio() {
+      const coin = document.getElementById('portfolioCoin').value.toUpperCase();
+      const qty = parseFloat(document.getElementById('portfolioQty').value);
+      if (!coin || isNaN(qty)) return alert('Enter valid coin and quantity');
+      const price = Object.entries(coinPrices).find(([k]) => k.toUpperCase().includes(coin));
+      if (!price) return alert('Price not available');
+      const total = (price[1] * qty).toFixed(2);
+      const item = document.createElement('div');
+      item.textContent = `${coin} × ${qty} = ${selectedCurrency.toUpperCase()} ${total}`;
+      document.getElementById('portfolioList').appendChild(item);
+    }
+
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    let chart;
+    function drawChart(timeframe = '24h') {
+      const { labels, data } = generateChartData(timeframe);
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'BTC Price',
+            data: data,
+            borderColor: '#a29bfe',
+            fill: true,
+            backgroundColor: 'rgba(162, 155, 254, 0.1)',
+            tension: 0.4,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: false },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function generateChartData(timeframe) {
+      let count = { '24h': 24, '7d': 7, '1m': 30, '1y': 12 }[timeframe] || 24;
+      let labels = [], data = [], price = 60000;
+      for (let i = 0; i < count; i++) {
+        labels.push(timeframe === '24h' ? `${i}:00` : `Day ${i + 1}`);
+        price *= 1 + (Math.random() * 0.02 - 0.01);
+        data.push(price.toFixed(2));
+      }
+      return { labels, data };
+    }
+
+    document.getElementById('currency').addEventListener('change', (e) => {
+      selectedCurrency = e.target.value;
+      fetchGlobalStats();
+      fetchPrices();
+    });
+
+    fetchGlobalStats();
+    fetchTrendingCoins();
+    fetchPrices();
+    drawChart();
+    setInterval(fetchPrices, 5000);
+  </script>
+</body>
+</html>

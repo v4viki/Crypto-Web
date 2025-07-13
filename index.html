@@ -8,8 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
+    
     <nav>
         <input type="checkbox" id="check">
         <label for="check" class="checkbtn">
@@ -32,7 +37,7 @@
             <div class="hero-text">
                 <h1>Crypto Currency</h1>
                 <p>Discover the future of finance with our innovative cryptocurrency solutions.</p>
-                <button class="btn">Get Started</button>
+                <button id="button" class="btn">Get Started</button>
             </div>
             <div class="hero-image">
                 <img src="slider-img (1).f2ef6b9f18e7a7d32602.png" alt="Crypto">
@@ -43,20 +48,12 @@
             <div class="shape shape-2"></div>
             <div class="shape shape-3"></div>
         </div>
+
+
+<canvas id="chart" width="400" height="200"></canvas>
+
     </section>
-    <div class="curved-div">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-            <defs>
-                <linearGradient id="gradient" gradientTransform="rotate(90)">
-                    <stop offset="0%" stop-color="#007bff" />
-                    <stop offset="100%" stop-color="#0a0552" />
-                </linearGradient>
-            </defs>
-            <path fill="url(#gradient)" fill-opacity="1"
-                d="M0,160L60,144C120,128,240,96,360,85.3C480,75,600,85,720,117.3C840,149,960,203,1080,208C1200,213,1320,171,1380,149.3L1440,128L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z">
-            </path>
-        </svg>
-    </div>
+  
     
     <section id="services" class="services slide-in">
         <h1>Our <font color="skyblue">Services</font></h1>
@@ -81,7 +78,7 @@
                 <a href="#" class="btn-read-more">Read More</a>
             </div>
         </div>
-        <button class="view-all">View All</button>
+        <button oncli"view-all">View All</button>
     </section>
     
     <section id="about" class="about-modern fade-in">
@@ -233,7 +230,7 @@
                         <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."</p>
                         <div class="author-info">
                             <div class="author-image">
-                                <img src="IMG20240417112739-02.jpeg" alt="John Doe">
+                                <img src="1600w-qgCnd5swcrQ.webp" alt="John Doe">
                             </div>
                             <div class="author-details">
                                 <h4>John Doe</h4>
@@ -338,6 +335,10 @@
         <p>&copy; 2024 Finexo. All rights reserved.</p>
     </div>
     </footer>
+    
     <script src="index.js"></script>
+    
 </body>
 </html>
+
+
