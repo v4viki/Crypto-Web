@@ -22,7 +22,8 @@ Crypto-Web is a responsive, real-time cryptocurrency tracking web application bu
 
 ## Technologies Used
 
-- HTML5 - Frontend for building UI components  
+- HTML5 - Frontend for building UI components
+- javaScript - Animation and scrolling features
 - CSS - Styling for a sleek, professional look  
 - External API (likely CoinGecko or similar) - For fetching up-to-date cryptocurrency market data  
 - GitHub Pages - Project hosted live via GitHub Pages for free and easy access
